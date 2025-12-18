@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Torque Tradition: Sourcing and reviving iconic British and Japanese classic motorcycles. Sourced in the UK, shipped to India with care and authenticity.">
+    <title>Torque Tradition | Classic Motorcycle Sourcing & Restoration</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Oswald:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'racing-green': '#05110d',
+                        'deep-green': '#020604',
+                        'brass': '#d4af37',
+                        'brass-dark': '#aa8c2c',
+                        'off-white': '#e5e5e0',
+                    },
+                    fontFamily: {
+                        royal: ['"Playfair Display"', 'serif'],
+                        body: ['"Lato"', 'sans-serif'],
+                        mech: ['"Oswald"', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'blueprint': "linear-gradient(rgba(212, 175, 55, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(212, 175, 55, 0.05) 1px, transparent 1px)",
+                        'blueprint-strong': "linear-gradient(rgba(212, 175, 55, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(212, 175, 55, 0.1) 1px, transparent 1px)",
+                    },
+                    spacing: {
+                        'golden': '1.618rem',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #020604;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #d4af37;
+            border-radius: 3px;
+        }
+
+        /* Animations */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hover-line::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0%;
+            height: 1px;
+            background-color: #d4af37;
+            transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .hover-line:hover::after {
+            width: 100%;
+        }
+
+        /* Clean Button Style */
+        .btn-royal {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .btn-royal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(212, 175, 55, 0.15);
+            transform: skewX(-20deg);
+            transition: left 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .btn-royal:hover::before {
+            left: 100%;
+        }
+
+        /* FAQ Dossier Animation */
+        .dossier-card {
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        
+        .dossier-content {
+            transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease, margin 0.4s ease;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+
+        .dossier-card.active {
+            border-color: rgba(212, 175, 55, 0.4);
+            background-color: #08120e;
+        }
+
+        .dossier-card.active .dossier-content {
+            max-height: 300px;
+            opacity: 1;
+            margin-top: 1.5rem;
+        }
+
+        .dossier-card.active .status-light {
+            background-color: #d4af37;
+            box-shadow: 0 0 10px #d4af37;
+        }
+
+        /* Loader Animations */
+        @keyframes expandWidth {
+            0% { width: 0; }
+            100% { width: 5rem; }
+        }
+
+        @keyframes fadeInSlow {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-expand {
+            animation: expandWidth 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .animate-fade-in-slow {
+            animation: fadeInSlow 1.2s ease-out 0.6s forwards;
+        }
+
+        .loader-hidden {
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        /* Image Aspects */
+        .aspect-golden-portrait { aspect-ratio: 1 / 1.618; }
+        .aspect-golden-landscape { aspect-ratio: 1.618 / 1; }
+    </style>
+</head>
+
+<body class="bg-deep-green text-off-white font-body selection:bg-brass selection:text-deep-green overflow-x-hidden antialiased">
+
+    <!-- Loading Animation -->
+    <div id="loader" class="fixed inset-0 z-[100] bg-[#010503] flex flex-col items-center justify-center transition-all duration-1000 ease-in-out">
+        <div class="relative mb-12">
+            <div class="w-40 h-40 border border-white/5 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-[spin_16s_linear_infinite]"></div>
+            <div class="w-28 h-28 border border-brass/30 rounded-full border-t-brass animate-[spin_3s_linear_infinite]"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <i data-lucide="cog" class="w-16 h-16 text-brass animate-[spin_6s_linear_infinite_reverse]"></i>
+            </div>
+        </div>
+        <h1 class="font-royal text-3xl text-white tracking-[0.25em] mb-6 animate-pulse">TORQUE TRADITION</h1>
+    </div>
+
+    <!-- Navigation (Standard Full Width) -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-700 border-b border-white/5 bg-deep-green/90 backdrop-blur-md h-24 md:h-28 flex items-center">
+        <div class="w-full px-6 md:px-12 lg:px-16 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#home" class="flex items-center gap-4 md:gap-5 group">
+                <i data-lucide="cog" class="w-10 h-10 md:w-12 md:h-12 text-brass animate-[spin_20s_linear_infinite] opacity-90"></i>
+                <div class="flex flex-col">
+                    <span class="font-royal text-3xl md:text-4xl lg:text-5xl text-white tracking-widest leading-none">TORQUE</span>
+                    <span class="font-mech text-[0.6rem] md:text-xs text-brass tracking-[0.5em] uppercase leading-none mt-2 font-bold">Tradition</span>
+                </div>
+            </a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden lg:flex items-center space-x-10 font-mech text-sm tracking-[0.25em] uppercase text-gray-400 font-bold">
+                <a href="#home" class="hover:text-white transition-colors hover-line relative">Home</a>
+                <a href="#about" class="hover:text-white transition-colors hover-line relative">About</a>
+                <a href="#services" class="hover:text-white transition-colors hover-line relative">Services</a>
+                <a href="#buy" class="hover:text-white transition-colors hover-line relative">Buy a Classic</a>
+                <a href="#faq" class="hover:text-white transition-colors hover-line relative">FAQ</a>
+                <a href="#contact" class="px-8 py-3 border border-brass text-brass hover:bg-brass hover:text-deep-green transition-all duration-500 btn-royal tracking-[0.3em] text-xs">
+                    Contact
+                </a>
+            </div>
+
+            <!-- Mobile Menu Btn -->
+            <button id="menuBtn" class="lg:hidden text-white hover:text-brass transition-colors">
+                <i data-lucide="menu" class="w-8 h-8 md:w-10 md:h-10"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobileMenu" class="fixed inset-0 bg-deep-green z-50 transform translate-x-full transition-transform duration-700 cubic-bezier(0.22, 1, 0.36, 1) flex flex-col justify-center items-center space-y-8 border-l border-white/10">
+            <button id="closeMenu" class="absolute top-8 right-8 text-white hover:text-brass">
+                <i data-lucide="x" class="w-10 h-10"></i>
+            </button>
+            <a href="#home" class="font-royal text-4xl text-white hover:text-brass mobile-link">Home</a>
+            <a href="#about" class="font-royal text-4xl text-white hover:text-brass mobile-link">About</a>
+            <a href="#services" class="font-royal text-4xl text-white hover:text-brass mobile-link">Services</a>
+            <a href="#buy" class="font-royal text-4xl text-white hover:text-brass mobile-link">Buy a Classic</a>
+            <a href="#faq" class="font-royal text-4xl text-white hover:text-brass mobile-link">FAQ</a>
+            <a href="#contact" class="font-royal text-4xl text-brass mobile-link">Contact</a>
+        </div>
+    </nav>
+
+    <!-- 1. HOME SECTION (Hero) -->
+    <section id="home" class="relative h-screen w-full overflow-hidden flex items-center justify-center bg-deep-green">
+        <div class="absolute inset-0 z-0">
+            <!-- 
+                !!! UPDATE INSTRUCTIONS !!!
+                1. If your file is a VIDEO (mp4): Uncomment the <video> block below and comment out the <img> tag.
+                2. If your file is an IMAGE (jpg/png): Use the <img> tag and update src to your local path.
+            -->
+
+            <!-- OPTION 1: IMAGE (Active by default) -->
+            <img src="./images/hero-bg.jpg" 
+                 onerror="this.src='https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=2070&auto=format&fit=crop'" 
+                 alt="Hero Bike Background" 
+                 class="w-full h-full object-cover opacity-30 scale-105">
+
+            <!-- OPTION 2: VIDEO (Uncomment to use) -->
+            <!--
+            <video autoplay muted loop playsinline class="w-full h-full object-cover opacity-30 scale-105">
+                <source src="./images/hero-video.mp4" type="video/mp4">
+            </video>
+            -->
+            
+            <div class="absolute inset-0 bg-gradient-to-b from-deep-green/80 via-transparent to-deep-green"></div>
+            <div class="absolute inset-0 bg-blueprint opacity-10"></div>
+        </div>
+
+        <div class="relative z-10 text-center px-6 max-w-[90rem] mx-auto pt-20">
+            <div class="flex items-center justify-center gap-8 mb-12 fade-up opacity-0">
+                <div class="h-[1px] w-12 bg-brass/50"></div>
+                <span class="text-xs font-mech tracking-[0.6em] text-brass uppercase font-bold">London • Bombay</span>
+                <div class="h-[1px] w-12 bg-brass/50"></div>
+            </div>
+            <h1 class="font-royal text-5xl md:text-7xl text-white mb-12 leading-[1.1] fade-up opacity-0 drop-shadow-2xl" style="transition-delay: 100ms;">
+                Not Just Machines. <br> <span class="italic font-light text-brass">Memories in Motion.</span>
+            </h1>
+            <p class="font-body text-gray-300 text-xl font-light tracking-wide max-w-4xl mx-auto mb-20 fade-up opacity-0 leading-relaxed" style="transition-delay: 300ms;">
+                Welcome to Torque Tradition where the soul of classic motorcycles is preserved, restored, and reimagined for a new generation of riders.
+            </p>
+            <div class="flex flex-col md:flex-row gap-12 justify-center items-center fade-up opacity-0" style="transition-delay: 400ms;">
+                <a href="#contact" class="group px-14 py-6 border border-brass text-brass hover:bg-brass hover:text-deep-green transition-all duration-500 font-mech tracking-[0.3em] uppercase text-sm font-bold btn-royal">
+                    Tell Us What You're Looking For
+                </a>
+                <a href="#buy" class="text-gray-400 hover:text-white font-mech tracking-widest text-sm uppercase transition-colors border-b border-transparent hover:border-white pb-1">
+                    View Inventory
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. ABOUT SECTION -->
+    <section id="about" class="py-32 md:py-40 bg-[#030a07] relative overflow-hidden border-t border-white/5">
+        <div class="max-w-[90rem] mx-auto px-6 md:px-16 grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-32 items-center">
+            <!-- Image Frame -->
+            <div class="fade-up opacity-0 relative group w-full">
+                <div class="absolute top-6 -right-6 w-full h-full border border-brass/20 z-0 hidden lg:block"></div>
+                <div class="relative z-10 bg-deep-green aspect-golden-portrait overflow-hidden shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1622329219359-21946002164f?q=80&w=1587&auto=format&fit=crop" alt="Mechanic working on classic bike" class="w-full h-full object-cover grayscale opacity-90 hover:opacity-100 transition-opacity duration-1000">
+                </div>
+            </div>
+            <!-- Text Structure -->
+            <div class="fade-up opacity-0 lg:pl-16">
+                <div class="flex items-center gap-6 mb-10">
+                    <div class="w-12 h-[1px] bg-brass"></div>
+                    <span class="font-mech text-brass text-sm tracking-[0.4em] uppercase font-bold">Our DNA</span>
+                </div>
+                <h3 class="font-royal text-5xl md:text-6xl text-white mb-10 leading-tight">We Don't Just Move Machines. <span class="text-white/20 font-bold">We Move Memories.</span></h3>
+                <div class="space-y-8 font-body text-gray-400 text-lg leading-loose border-l border-white/10 pl-8 md:pl-12">
+                    <p>Founded in the UK with a deep respect for classic craftsmanship, we specialise in sourcing and reviving iconic motorcycles with timeless soul. Whether it's a barn-find 2-stroke from the 70s or a restored twin-cylinder legend, every bike we touch carries the weight of history and the joy of rediscovery.</p>
+                    <p>We serve a growing community of collectors, riders, and enthusiasts across borders especially those in India who crave authentic British and Japanese classics. Backed by mechanical precision, curated sourcing, and a deep-rooted passion for two-wheel tradition, Torque Tradition is where legacy meets the road.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. SERVICES SECTION (Redesigned) -->
+    <section id="services" class="py-32 md:py-40 bg-racing-green relative overflow-hidden">
+        <!-- Background decorative elements -->
+        <div class="absolute inset-0 bg-blueprint opacity-20 pointer-events-none"></div>
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[#020604] to-transparent opacity-80 pointer-events-none"></div>
+
+        <div class="max-w-[90rem] mx-auto px-6 md:px-16 relative z-10">
+            <!-- Header Layout -->
+            <div class="text-center max-w-4xl mx-auto mb-24 fade-up opacity-0">
+                <div class="inline-flex items-center justify-center p-3 border border-brass/30 rounded-full mb-8 backdrop-blur-sm">
+                    <i data-lucide="wrench" class="w-6 h-6 text-brass"></i>
+                </div>
+                <h2 class="font-royal text-5xl md:text-7xl text-white mb-8">What We Offer</h2>
+                <div class="h-[1px] w-24 bg-gradient-to-r from-transparent via-brass to-transparent mx-auto mb-8"></div>
+                <p class="font-body text-gray-400 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">
+                    We don't just find motorcycles; we revive heritage. Built for riders who value authenticity, sourcing excellence, and peace of mind.
+                </p>
+                <p class="font-mech text-brass tracking-[0.2em] uppercase text-sm mt-8 font-bold flex items-center justify-center gap-3">
+                    <span class="w-2 h-2 bg-brass rounded-full animate-pulse"></span>
+                    Sourced in the UK, Shipped to India
+                    <span class="w-2 h-2 bg-brass rounded-full animate-pulse"></span>
+                </p>
+            </div>
+
+            <!-- Bento Grid Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 fade-up opacity-0">
+                
+                <!-- Card 01 (Span 4) -->
+                <div class="lg:col-span-4 bg-[#0a1f18] p-8 md:p-10 border border-white/5 hover:border-brass/50 transition-all duration-500 group relative overflow-hidden rounded-sm hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(212,175,55,0.1)]">
+                    <div class="absolute inset-0 bg-blueprint-strong opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                    <div class="relative z-10">
+                        <div class="text-white/10 group-hover:text-brass/20 transition-colors font-mech text-6xl md:text-7xl absolute -top-4 -right-4 font-bold">01</div>
+                        <i data-lucide="search" class="w-10 h-10 text-brass mb-6"></i>
+                        <h3 class="font-royal text-2xl text-white mb-4">Classic Sourcing</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm font-light">We hunt down original UK-based classics selected for their provenance. From Japanese 2-strokes to British twin-cylinder legends.</p>
+                    </div>
+                </div>
+
+                <!-- Card 02 (Span 4) -->
+                <div class="lg:col-span-4 bg-[#0a1f18] p-8 md:p-10 border border-white/5 hover:border-brass/50 transition-all duration-500 group relative overflow-hidden rounded-sm hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(212,175,55,0.1)]">
+                    <div class="absolute inset-0 bg-blueprint-strong opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                    <div class="relative z-10">
+                        <div class="text-white/10 group-hover:text-brass/20 transition-colors font-mech text-6xl md:text-7xl absolute -top-4 -right-4 font-bold">02</div>
+                        <i data-lucide="eye" class="w-10 h-10 text-brass mb-6"></i>
+                        <h3 class="font-royal text-2xl text-white mb-4">Restoration Oversight</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm font-light">We ensure every bike is evaluated for authenticity and revival potential. Restorations are overseen with trusted UK specialists.</p>
+                    </div>
+                </div>
+
+                <!-- Card 03 (Span 4) -->
+                <div class="lg:col-span-4 bg-[#0a1f18] p-8 md:p-10 border border-white/5 hover:border-brass/50 transition-all duration-500 group relative overflow-hidden rounded-sm hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(212,175,55,0.1)]">
+                    <div class="absolute inset-0 bg-blueprint-strong opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                    <div class="relative z-10">
+                        <div class="text-white/10 group-hover:text-brass/20 transition-colors font-mech text-6xl md:text-7xl absolute -top-4 -right-4 font-bold">03</div>
+                        <i data-lucide="package" class="w-10 h-10 text-brass mb-6"></i>
+                        <h3 class="font-royal text-2xl text-white mb-4">Crating & Shipping</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm font-light">Securely crated and shipped from the UK to India with care. Insurance handled so you don't have to chase couriers.</p>
+                    </div>
+                </div>
+
+                <!-- Card 04 (Span 6) -->
+                <div class="lg:col-span-6 bg-[#0a1f18] p-8 md:p-12 border border-white/5 hover:border-brass/50 transition-all duration-500 group relative overflow-hidden rounded-sm hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(212,175,55,0.1)] min-h-[280px] flex flex-col justify-center">
+                    <div class="absolute inset-0 bg-blueprint-strong opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                    <div class="relative z-10 flex flex-col md:flex-row gap-8 items-start md:items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-20 h-20 rounded-full border border-white/10 flex items-center justify-center group-hover:border-brass/50 transition-colors">
+                                <i data-lucide="file-text" class="w-8 h-8 text-brass"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-white/10 group-hover:text-brass/20 transition-colors font-mech text-4xl absolute top-4 right-4 font-bold">04</div>
+                            <h3 class="font-royal text-2xl md:text-3xl text-white mb-3">Documentation Support</h3>
+                            <p class="text-gray-400 leading-relaxed text-sm font-light max-w-sm">Every import includes the UK V5C logbook, sale invoice, and shipping paperwork needed to register your motorcycle in India.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 05 (Span 6 - Action) -->
+                <div class="lg:col-span-6 bg-gradient-to-br from-brass-dark/20 to-deep-green p-8 md:p-12 border border-brass/20 hover:border-brass transition-all duration-500 group relative overflow-hidden rounded-sm hover:-translate-y-2 hover:shadow-[0_0_40px_rgba(212,175,55,0.15)] min-h-[280px] flex flex-col justify-center">
+                    <div class="absolute inset-0 bg-blueprint opacity-10"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="font-royal text-3xl md:text-4xl text-white">Custom Requests</h3>
+                            <i data-lucide="arrow-right" class="w-8 h-8 text-brass transform group-hover:translate-x-2 transition-transform"></i>
+                        </div>
+                        <p class="text-gray-300 leading-relaxed text-base font-light mb-8 max-w-md">
+                            Got a dream bike in mind? Looking for a particular year, model, or variant? Let us know we can help you track it down.
+                        </p>
+                        <a href="#contact" class="inline-flex items-center gap-3 text-sm font-mech text-brass tracking-[0.2em] uppercase font-bold border-b border-brass pb-1 hover:text-white hover:border-white transition-colors">
+                            Initiate Search
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. BUY A CLASSIC SECTION -->
+    <section id="buy" class="py-32 md:py-40 bg-[#020604] relative border-t border-white/5">
+        <div class="max-w-[90rem] mx-auto px-6 md:px-16">
+            <!-- Header Flex Layout -->
+            <div class="flex flex-col md:flex-row justify-between items-end mb-24 border-b border-white/5 pb-12 fade-up opacity-0">
+                <div class="text-center md:text-left">
+                    <h2 class="font-mech text-brass text-sm tracking-[0.4em] mb-6 uppercase font-bold">Inventory</h2>
+                    <h3 class="font-royal text-6xl text-white">Buy a Classic</h3>
+                </div>
+                <!-- Filter Layout -->
+                <div class="flex space-x-12 mt-10 md:mt-0 font-mech text-sm tracking-[0.25em] uppercase font-bold">
+                    <button class="filter-btn text-brass border-b border-brass pb-2" data-filter="all">All</button>
+                    <button class="filter-btn text-gray-500 hover:text-white pb-2" data-filter="british">British</button>
+                    <button class="filter-btn text-gray-500 hover:text-white pb-2" data-filter="japanese">Japanese</button>
+                </div>
+            </div>
+
+            <!-- Grid Structure (Content populated by JS) -->
+            <div id="bike-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-24">
+                <!-- Javascript will insert card layout here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. FAQ SECTION (Overhauled to "Technical Dossier" Design) -->
+    <section id="faq" class="py-32 bg-[#030906] border-t border-white/5 relative overflow-hidden">
+        <!-- Blueprint BG for the whole section -->
+        <div class="absolute inset-0 bg-blueprint opacity-10 pointer-events-none"></div>
+        
+        <div class="max-w-[90rem] mx-auto px-6 md:px-12 relative z-10">
+            <div class="flex flex-col lg:flex-row gap-20 items-start">
+                
+                <!-- Left: Sticky Header Area -->
+                <div class="lg:w-1/3 lg:sticky lg:top-32 fade-up opacity-0">
+                    <div class="inline-flex items-center gap-4 mb-6">
+                        <div class="h-[1px] w-12 bg-brass"></div>
+                        <span class="font-mech text-brass text-xs tracking-[0.4em] uppercase font-bold">Information</span>
+                    </div>
+                    <h2 class="font-royal text-5xl md:text-7xl text-white mb-8 leading-none">The <br> Knowledge <br> <span class="text-white/20">Vault</span></h2>
+                    <p class="font-body text-gray-400 text-lg leading-relaxed mb-12 font-light">
+                        Essential intelligence for the prospective custodian. From ownership transfer to international logistics, everything you need to know is documented here.
+                    </p>
+                    <a href="#contact" class="hidden lg:inline-flex items-center gap-3 text-sm font-mech text-white hover:text-brass transition-colors tracking-widest uppercase font-bold group">
+                        More Questions?
+                        <i data-lucide="arrow-down" class="w-4 h-4 transform group-hover:translate-y-1 transition-transform"></i>
+                    </a>
+                </div>
+
+                <!-- Right: The Dossier Grid -->
+                <div class="lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-6 w-full fade-up opacity-0">
+                    
+                    <!-- Item 1 -->
+                    <div class="dossier-card border border-white/10 bg-[#060d0a] p-8 relative group cursor-pointer overflow-hidden rounded-sm hover:border-brass/30">
+                        <div class="absolute top-4 right-4 flex items-center gap-3">
+                            <span class="status-light w-1.5 h-1.5 rounded-full bg-white/20 transition-all duration-500"></span>
+                            <span class="font-mech text-white/20 text-4xl font-bold group-hover:text-white/10 transition-colors">01</span>
+                        </div>
+                        <h3 class="font-mech text-white tracking-widest uppercase text-sm font-bold pr-12 mb-2 group-hover:text-brass transition-colors">Ownership</h3>
+                        <h4 class="font-royal text-xl text-white/90">Who owns the bike?</h4>
+                        <div class="dossier-content">
+                            <div class="h-[1px] w-full bg-white/10 mb-6"></div>
+                            <p class="font-body text-gray-400 text-sm leading-relaxed">Ownership is legally transferred after full payment and before dispatch. You'll receive full documentation to register the vehicle in India.</p>
+                        </div>
+                        <div class="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brass/0 to-transparent group-hover:via-brass/50 transition-all duration-700"></div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="dossier-card border border-white/10 bg-[#060d0a] p-8 relative group cursor-pointer overflow-hidden rounded-sm hover:border-brass/30">
+                        <div class="absolute top-4 right-4 flex items-center gap-3">
+                            <span class="status-light w-1.5 h-1.5 rounded-full bg-white/20 transition-all duration-500"></span>
+                            <span class="font-mech text-white/20 text-4xl font-bold group-hover:text-white/10 transition-colors">02</span>
+                        </div>
+                        <h3 class="font-mech text-white tracking-widest uppercase text-sm font-bold pr-12 mb-2 group-hover:text-brass transition-colors">Documents</h3>
+                        <h4 class="font-royal text-xl text-white/90">Registration Papers?</h4>
+                        <div class="dossier-content">
+                            <div class="h-[1px] w-full bg-white/10 mb-6"></div>
+                            <p class="font-body text-gray-400 text-sm leading-relaxed">Yes. We provide a complete set of export and ownership documents, including the UK V5C logbook (if available), sales invoice, and shipping details.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="dossier-card border border-white/10 bg-[#060d0a] p-8 relative group cursor-pointer overflow-hidden rounded-sm hover:border-brass/30">
+                        <div class="absolute top-4 right-4 flex items-center gap-3">
+                            <span class="status-light w-1.5 h-1.5 rounded-full bg-white/20 transition-all duration-500"></span>
+                            <span class="font-mech text-white/20 text-4xl font-bold group-hover:text-white/10 transition-colors">03</span>
+                        </div>
+                        <h3 class="font-mech text-white tracking-widest uppercase text-sm font-bold pr-12 mb-2 group-hover:text-brass transition-colors">V5C Logbook</h3>
+                        <h4 class="font-royal text-xl text-white/90">What is it?</h4>
+                        <div class="dossier-content">
+                            <div class="h-[1px] w-full bg-white/10 mb-6"></div>
+                            <p class="font-body text-gray-400 text-sm leading-relaxed">The V5C is the UK's official vehicle registration certificate. It proves legal ownership and is equivalent to the Indian RC book.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 4 -->
+                    <div class="dossier-card border border-white/10 bg-[#060d0a] p-8 relative group cursor-pointer overflow-hidden rounded-sm hover:border-brass/30">
+                        <div class="absolute top-4 right-4 flex items-center gap-3">
+                            <span class="status-light w-1.5 h-1.5 rounded-full bg-white/20 transition-all duration-500"></span>
+                            <span class="font-mech text-white/20 text-4xl font-bold group-hover:text-white/10 transition-colors">04</span>
+                        </div>
+                        <h3 class="font-mech text-white tracking-widest uppercase text-sm font-bold pr-12 mb-2 group-hover:text-brass transition-colors">Logistics</h3>
+                        <h4 class="font-royal text-xl text-white/90">How does shipping work?</h4>
+                        <div class="dossier-content">
+                            <div class="h-[1px] w-full bg-white/10 mb-6"></div>
+                            <p class="font-body text-gray-400 text-sm leading-relaxed">Once ready, the bike is professionally crated and shipped via sea freight. We partner with experienced logistics providers for secure transport.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 5 -->
+                    <div class="dossier-card border border-white/10 bg-[#060d0a] p-8 relative group cursor-pointer overflow-hidden rounded-sm hover:border-brass/30">
+                        <div class="absolute top-4 right-4 flex items-center gap-3">
+                            <span class="status-light w-1.5 h-1.5 rounded-full bg-white/20 transition-all duration-500"></span>
+                            <span class="font-mech text-white/20 text-4xl font-bold group-hover:text-white/10 transition-colors">05</span>
+                        </div>
+                        <h3 class="font-mech text-white tracking-widest uppercase text-sm font-bold pr-12 mb-2 group-hover:text-brass transition-colors">Tracking</h3>
+                        <h4 class="font-royal text-xl text-white/90">Can I track it?</h4>
+                        <div class="dossier-content">
+                            <div class="h-[1px] w-full bg-white/10 mb-6"></div>
+                            <p class="font-body text-gray-400 text-sm leading-relaxed">Yes. Once dispatched, you will receive a tracking number and shipping reference to monitor timelines.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 6 -->
+                    <div class="dossier-card border border-white/10 bg-[#060d0a] p-8 relative group cursor-pointer overflow-hidden rounded-sm hover:border-brass/30">
+                        <div class="absolute top-4 right-4 flex items-center gap-3">
+                            <span class="status-light w-1.5 h-1.5 rounded-full bg-white/20 transition-all duration-500"></span>
+                            <span class="font-mech text-white/20 text-4xl font-bold group-hover:text-white/10 transition-colors">06</span>
+                        </div>
+                        <h3 class="font-mech text-white tracking-widest uppercase text-sm font-bold pr-12 mb-2 group-hover:text-brass transition-colors">Condition</h3>
+                        <h4 class="font-royal text-xl text-white/90">What state are they in?</h4>
+                        <div class="dossier-content">
+                            <div class="h-[1px] w-full bg-white/10 mb-6"></div>
+                            <p class="font-body text-gray-400 text-sm leading-relaxed">Each bike is either preserved original or restored. We provide detailed photos and condition reports before you commit.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 7 -->
+                    <div class="dossier-card border border-white/10 bg-[#060d0a] p-8 relative group cursor-pointer overflow-hidden rounded-sm hover:border-brass/30">
+                        <div class="absolute top-4 right-4 flex items-center gap-3">
+                            <span class="status-light w-1.5 h-1.5 rounded-full bg-white/20 transition-all duration-500"></span>
+                            <span class="font-mech text-white/20 text-4xl font-bold group-hover:text-white/10 transition-colors">07</span>
+                        </div>
+                        <h3 class="font-mech text-white tracking-widest uppercase text-sm font-bold pr-12 mb-2 group-hover:text-brass transition-colors">Custom</h3>
+                        <h4 class="font-royal text-xl text-white/90">Can I request a model?</h4>
+                        <div class="dossier-content">
+                            <div class="h-[1px] w-full bg-white/10 mb-6"></div>
+                            <p class="font-body text-gray-400 text-sm leading-relaxed">Absolutely. Tell us the make, year, and engine size, and we'll explore options and quote accordingly.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 8 -->
+                    <div class="dossier-card border border-white/10 bg-[#060d0a] p-8 relative group cursor-pointer overflow-hidden rounded-sm hover:border-brass/30">
+                        <div class="absolute top-4 right-4 flex items-center gap-3">
+                            <span class="status-light w-1.5 h-1.5 rounded-full bg-white/20 transition-all duration-500"></span>
+                            <span class="font-mech text-white/20 text-4xl font-bold group-hover:text-white/10 transition-colors">08</span>
+                        </div>
+                        <h3 class="font-mech text-white tracking-widest uppercase text-sm font-bold pr-12 mb-2 group-hover:text-brass transition-colors">Damage</h3>
+                        <h4 class="font-royal text-xl text-white/90">What if it arrives damaged?</h4>
+                        <div class="dossier-content">
+                            <div class="h-[1px] w-full bg-white/10 mb-6"></div>
+                            <p class="font-body text-gray-400 text-sm leading-relaxed">We use trusted partners to minimize risk. In rare events of damage, we assist with insurance claims.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 9 -->
+                    <div class="dossier-card border border-white/10 bg-[#060d0a] p-8 relative group cursor-pointer overflow-hidden rounded-sm hover:border-brass/30">
+                        <div class="absolute top-4 right-4 flex items-center gap-3">
+                            <span class="status-light w-1.5 h-1.5 rounded-full bg-white/20 transition-all duration-500"></span>
+                            <span class="font-mech text-white/20 text-4xl font-bold group-hover:text-white/10 transition-colors">09</span>
+                        </div>
+                        <h3 class="font-mech text-white tracking-widest uppercase text-sm font-bold pr-12 mb-2 group-hover:text-brass transition-colors">Pricing</h3>
+                        <h4 class="font-royal text-xl text-white/90">Typical costs?</h4>
+                        <div class="dossier-content">
+                            <div class="h-[1px] w-full bg-white/10 mb-6"></div>
+                            <p class="font-body text-gray-400 text-sm leading-relaxed">Prices vary by rarity and condition. Since each case is unique, contact us for an accurate, updated quote.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 10 -->
+                    <div class="dossier-card border border-white/10 bg-[#060d0a] p-8 relative group cursor-pointer overflow-hidden rounded-sm hover:border-brass/30">
+                        <div class="absolute top-4 right-4 flex items-center gap-3">
+                            <span class="status-light w-1.5 h-1.5 rounded-full bg-white/20 transition-all duration-500"></span>
+                            <span class="font-mech text-white/20 text-4xl font-bold group-hover:text-white/10 transition-colors">10</span>
+                        </div>
+                        <h3 class="font-mech text-white tracking-widest uppercase text-sm font-bold pr-12 mb-2 group-hover:text-brass transition-colors">Returns</h3>
+                        <h4 class="font-royal text-xl text-white/90">Cancellations?</h4>
+                        <div class="dossier-content">
+                            <div class="h-[1px] w-full bg-white/10 mb-6"></div>
+                            <p class="font-body text-gray-400 text-sm leading-relaxed">Due to international logistics, all sales are final. We ensure thorough communication before purchase.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 11 -->
+                    <div class="dossier-card border border-white/10 bg-[#060d0a] p-8 relative group cursor-pointer overflow-hidden rounded-sm hover:border-brass/30">
+                        <div class="absolute top-4 right-4 flex items-center gap-3">
+                            <span class="status-light w-1.5 h-1.5 rounded-full bg-white/20 transition-all duration-500"></span>
+                            <span class="font-mech text-white/20 text-4xl font-bold group-hover:text-white/10 transition-colors">11</span>
+                        </div>
+                        <h3 class="font-mech text-white tracking-widest uppercase text-sm font-bold pr-12 mb-2 group-hover:text-brass transition-colors">Payment</h3>
+                        <h4 class="font-royal text-xl text-white/90">How do I pay?</h4>
+                        <div class="dossier-content">
+                            <div class="h-[1px] w-full bg-white/10 mb-6"></div>
+                            <p class="font-body text-gray-400 text-sm leading-relaxed">Payment is made in phases: deposit first to secure, then final settlement before dispatch.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 12 -->
+                    <div class="dossier-card border border-white/10 bg-[#060d0a] p-8 relative group cursor-pointer overflow-hidden rounded-sm hover:border-brass/30">
+                        <div class="absolute top-4 right-4 flex items-center gap-3">
+                            <span class="status-light w-1.5 h-1.5 rounded-full bg-white/20 transition-all duration-500"></span>
+                            <span class="font-mech text-white/20 text-4xl font-bold group-hover:text-white/10 transition-colors">12</span>
+                        </div>
+                        <h3 class="font-mech text-white tracking-widest uppercase text-sm font-bold pr-12 mb-2 group-hover:text-brass transition-colors">Spares</h3>
+                        <h4 class="font-royal text-xl text-white/90">Need parts in India?</h4>
+                        <div class="dossier-content">
+                            <div class="h-[1px] w-full bg-white/10 mb-6"></div>
+                            <p class="font-body text-gray-400 text-sm leading-relaxed">Most spares are available via specialist suppliers. We can guide you to trusted workshops when needed.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. CONTACT SECTION -->
+    <section id="contact" class="py-32 md:py-40 bg-[#020604] border-t border-white/5">
+        <div class="max-w-[90rem] mx-auto px-6 md:px-16 grid grid-cols-1 lg:grid-cols-2 gap-24">
+            
+            <!-- Left Column: Info -->
+            <div class="fade-up opacity-0">
+                <h2 class="font-royal text-5xl text-white mb-8">Get in Touch</h2>
+                <p class="text-gray-400 text-lg mb-12 font-light">Got a question, request, or just want to talk bikes? We'd love to hear from you. Reach out via email or fill out the form below.</p>
+                
+                <div class="space-y-8 font-mech tracking-widest uppercase text-sm text-gray-300 font-bold mb-12">
+                    <div class="flex items-center gap-4">
+                        <i data-lucide="mail" class="text-brass w-5 h-5"></i>
+                        <span>info@torquetradition.com</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <i data-lucide="map-pin" class="text-brass w-5 h-5"></i>
+                        <span>London, United Kingdom</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Form -->
+            <div class="bg-racing-green p-10 md:p-12 border border-white/5 fade-up opacity-0">
+                <h3 class="font-royal text-3xl text-white mb-10">Inquiry Form</h3>
+                <form class="space-y-6">
+                    <div class="space-y-2">
+                        <label class="text-xs text-brass font-mech uppercase tracking-widest font-bold">Full Name</label>
+                        <input type="text" class="w-full bg-black/30 border border-white/10 p-4 text-white focus:border-brass outline-none transition-colors" required>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs text-brass font-mech uppercase tracking-widest font-bold">Email Address</label>
+                        <input type="email" class="w-full bg-black/30 border border-white/10 p-4 text-white focus:border-brass outline-none transition-colors" required>
+                    </div>
+                     <div class="space-y-2">
+                        <label class="text-xs text-brass font-mech uppercase tracking-widest font-bold">Phone Number</label>
+                        <input type="tel" class="w-full bg-black/30 border border-white/10 p-4 text-white focus:border-brass outline-none transition-colors">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs text-brass font-mech uppercase tracking-widest font-bold">Message / Bike Details</label>
+                        <textarea rows="4" class="w-full bg-black/30 border border-white/10 p-4 text-white focus:border-brass outline-none transition-colors" required></textarea>
+                    </div>
+                    <button class="w-full py-5 bg-brass text-deep-green font-mech font-bold tracking-[0.25em] uppercase hover:bg-white transition-colors">Submit Request</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. PRIVACY & TERMS SECTION -->
+    <section id="legal" class="py-20 bg-black border-t border-white/10">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h4 class="font-mech text-white text-sm tracking-[0.25em] uppercase mb-8 font-bold opacity-50">Legal & Privacy</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-left">
+                <!-- Privacy Block -->
+                <div class="space-y-4">
+                    <h5 class="text-brass font-royal text-xl">Privacy Policy</h5>
+                    <p class="text-gray-600 text-xs leading-relaxed font-body">
+                        We respect your privacy. All personal information collected via our inquiry forms is strictly used for communication regarding our services and your specific requests. We do not share, sell, or distribute your data to third parties without your explicit consent. Your details are securely stored and only used to facilitate your motorcycle sourcing and shipping process.
+                    </p>
+                </div>
+                <!-- Terms Block -->
+                <div class="space-y-4">
+                    <h5 class="text-brass font-royal text-xl">Terms of Service</h5>
+                    <p class="text-gray-600 text-xs leading-relaxed font-body">
+                        All vehicle sales are final. Deposits are non-refundable once work or sourcing has commenced. Vehicles are sold as historic items without modern warranty standards unless explicitly stated in the bill of sale. We ensure thorough communication and condition reports prior to any transaction to ensure transparency. By engaging our services, you agree to these terms.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-deep-green py-10 border-t border-white/5">
+        <div class="max-w-[90rem] mx-auto px-6 text-center md:text-left flex flex-col md:flex-row justify-between items-center text-[0.65rem] text-gray-600 font-mech tracking-widest uppercase font-bold">
+            <div>&copy; 2025 TORQUE TRADITION. LONDON.</div>
+            <div class="mt-4 md:mt-0 flex gap-6">
+                <a href="#home" class="hover:text-brass transition-colors">Back to Top</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bike Detail Modal (Kept for "Buy a Classic" functionality) -->
+    <div id="bikeModal" class="fixed inset-0 z-[60] bg-black/95 backdrop-blur-xl hidden opacity-0 transition-all duration-700 flex items-center justify-center p-4">
+        <div class="bg-racing-green w-full max-w-7xl border border-white/10 shadow-2xl flex flex-col md:flex-row max-h-[95vh] overflow-hidden">
+            <button id="closeModal" class="absolute top-6 right-6 md:top-8 md:right-8 text-white/50 hover:text-white z-20 transition-colors">
+                <i data-lucide="x" class="w-10 h-10 md:w-12 md:h-12"></i>
+            </button>
+            <div class="w-full md:w-3/5 bg-black relative h-64 md:h-auto">
+                <img id="modalImg" src="" alt="Motorcycle Detail View" class="w-full h-full object-cover opacity-90">
+                <div class="absolute inset-0 bg-blueprint opacity-20 mix-blend-overlay"></div>
+            </div>
+            <div class="w-full md:w-2/5 p-8 md:p-20 overflow-y-auto bg-deep-green relative">
+                <div id="modalCat" class="font-mech text-brass text-xs md:text-sm tracking-[0.4em] mb-4 md:mb-6 uppercase font-bold">Spec Sheet</div>
+                <h2 id="modalTitle" class="font-royal text-4xl md:text-6xl text-white mb-8 md:mb-12 leading-tight">Bike Name</h2>
+                <div class="space-y-8 md:space-y-12 mb-10 md:mb-16">
+                    <div class="grid grid-cols-2 gap-8 md:gap-12">
+                        <div class="border-l-2 border-white/10 pl-4">
+                            <span class="block font-mech text-gray-500 text-[0.65rem] uppercase tracking-wider mb-2 font-bold">Year</span>
+                            <span id="modalYear" class="font-body text-white text-xl">1960</span>
+                        </div>
+                        <div class="border-l-2 border-white/10 pl-4">
+                            <span class="block font-mech text-gray-500 text-[0.65rem] uppercase tracking-wider mb-2 font-bold">Engine</span>
+                            <span id="modalEngine" class="font-body text-white text-xl">500cc</span>
+                        </div>
+                        <div class="border-l-2 border-white/10 pl-4">
+                            <span class="block font-mech text-gray-500 text-[0.65rem] uppercase tracking-wider mb-2 font-bold">Price</span>
+                            <span id="modalPrice" class="font-mech text-brass text-xl tracking-wide">£12,000</span>
+                        </div>
+                    </div>
+                </div>
+                <p id="modalDesc" class="font-body text-gray-300 mb-10 leading-relaxed text-base font-light">Description.</p>
+                <button class="w-full border border-brass text-brass py-6 text-xs font-mech uppercase tracking-[0.3em] font-bold hover:bg-brass hover:text-deep-green transition-colors">Request Spec File</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logic -->
+    <script>
+        const bikes = [
+            {
+                id: "01", name: "BSA Gold Star", category: "british", year: "1958", price: "£18,500", engine: "499cc OHV", hp: "42 bhp",
+                image: "https://images.unsplash.com/photo-1622329219359-21946002164f?q=80&w=1587",
+                desc: "The DBD34 Gold Star features the legendary clip-ons, RRT2 gearbox, and the swept-back exhaust that defined an era. Meticulously restored to Clubman spec.",
+            },
+            {
+                id: "02", name: "Velocette Thruxton", category: "british", year: "1965", price: "£24,000", engine: "499cc OHV", hp: "41 bhp",
+                image: "https://images.unsplash.com/photo-1558980394-a3099ed53abb?q=80&w=2070",
+                desc: "The final and most potent development of the Velocette single. A true connoisseur's machine, known for its endurance racing pedigree.",
+            },
+            {
+                id: "03", name: "Triumph Bonneville", category: "british", year: "1960", price: "£16,500", engine: "650cc Twin", hp: "46 bhp",
+                image: "https://images.unsplash.com/photo-1616400762492-c0529d332616?q=80&w=1000",
+                desc: "Pre-Unit construction. The bike that made Triumph famous globally. Finished in Azure Blue and Silver.",
+            },
+            {
+                id: "04", name: "Norton Manx 30M", category: "british", year: "1959", price: "£32,000", engine: "498cc DOHC", hp: "50 bhp",
+                image: "https://images.unsplash.com/photo-1618991264420-565451e59266?q=80&w=1000",
+                desc: "The quintessential racing motorcycle. Featherbed frame, exposed cam box, and a presence that demands respect.",
+            },
+            {
+                id: "05", name: "Ariel Square Four", category: "british", year: "1956", price: "£19,500", engine: "997cc 4-Cyl", hp: "42 bhp",
+                image: "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?q=80&w=1000",
+                desc: "The 'Squariel'. Unmatched smoothness and torque. The four-pipe aesthetic is art in motion.",
+            },
+            {
+                id: "06", name: "Honda CB750 K0", category: "japanese", year: "1969", price: "£28,000", engine: "736cc Inline-4", hp: "67 bhp",
+                image: "https://images.unsplash.com/photo-1558981806-ec527fa84c3d?q=80&w=1000",
+                desc: "The Superbike that changed everything. Sandcast engine cases (early production). A masterclass in Japanese engineering.",
+            }
+        ];
+
+        // --- Render ---
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            // Loader
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.classList.add('loader-hidden');
+            }, 2500);
+
+            renderBikes('all');
+            setupObservers();
+
+            // Dossier Card Logic
+            document.querySelectorAll('.dossier-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const isActive = card.classList.contains('active');
+                    
+                    // Close others (optional, keep it open for "dossier" feel? Let's close others for cleanliness)
+                    document.querySelectorAll('.dossier-card').forEach(c => c.classList.remove('active'));
+
+                    if (!isActive) {
+                        card.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        function renderBikes(filter) {
+            const grid = document.getElementById('bike-grid');
+            grid.innerHTML = '';
+            const filtered = filter === 'all' ? bikes : bikes.filter(b => b.category === filter);
+
+            filtered.forEach((bike, i) => {
+                const el = document.createElement('div');
+                el.className = 'group cursor-pointer fade-up opacity-0';
+                el.style.transitionDelay = `${i * 100}ms`;
+                el.onclick = () => openModal(bike);
+                el.innerHTML = `
+                    <div class="relative overflow-hidden aspect-golden-landscape mb-8 bg-black shadow-2xl">
+                        <img src="${bike.image}" alt="${bike.name}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000">
+                        <div class="absolute top-0 left-0 w-full h-full border border-white/5 group-hover:border-brass/40 transition-colors z-10"></div>
+                        <div class="absolute top-5 left-5 w-5 h-5 border-t border-l border-white/30 z-20 transition-all duration-500 group-hover:w-8 group-hover:h-8 group-hover:border-brass"></div>
+                        <div class="absolute bottom-5 right-5 w-5 h-5 border-b border-r border-white/30 z-20 transition-all duration-500 group-hover:w-8 group-hover:h-8 group-hover:border-brass"></div>
+                    </div>
+                    <div class="flex justify-between items-start border-b border-white/5 pb-6">
+                        <div>
+                            <div class="flex items-center gap-4 mb-3">
+                                <span class="w-2 h-2 bg-brass rounded-full"></span>
+                                <h3 class="font-mech text-white uppercase tracking-widest text-base group-hover:text-brass transition-colors font-bold">${bike.name}</h3>
+                            </div>
+                            <div class="font-body text-gray-400 text-sm font-light pl-6">${bike.year} / ${bike.engine}</div>
+                        </div>
+                        <div class="font-mech text-brass text-base tracking-wider font-bold">${bike.price}</div>
+                    </div>
+                `;
+                grid.appendChild(el);
+            });
+            setupObservers();
+        }
+
+        // --- Filters ---
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('text-brass', 'border-brass');
+                    b.classList.add('text-gray-500', 'border-transparent');
+                });
+                e.target.classList.add('text-brass', 'border-brass');
+                e.target.classList.remove('text-gray-500', 'border-transparent');
+                renderBikes(e.target.dataset.filter);
+            });
+        });
+
+        // --- Modal ---
+        const modal = document.getElementById('bikeModal');
+        const closeModal = document.getElementById('closeModal');
+        function openModal(bike) {
+            document.getElementById('modalImg').src = bike.image;
+            document.getElementById('modalTitle').innerText = bike.name;
+            document.getElementById('modalYear').innerText = bike.year;
+            document.getElementById('modalEngine').innerText = bike.engine;
+            document.getElementById('modalPrice').innerText = bike.price;
+            document.getElementById('modalDesc').innerText = bike.desc;
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+            document.body.style.overflow = 'hidden';
+        }
+        closeModal.addEventListener('click', () => {
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }, 700);
+        });
+
+        // --- Navbar Scroll ---
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('bg-deep-green', 'shadow-2xl', 'h-20', 'md:h-24');
+                nav.classList.remove('bg-deep-green/90', 'h-24', 'md:h-28');
+            } else {
+                nav.classList.remove('bg-deep-green', 'shadow-2xl', 'h-20', 'md:h-24');
+                nav.classList.add('bg-deep-green/90', 'h-24', 'md:h-28');
+            }
+        });
+
+        // --- Observers ---
+        function setupObservers() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        entry.target.classList.remove('opacity-0');
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+        }
+
+        // --- Mobile Menu ---
+        const menuBtn = document.getElementById('menuBtn');
+        const closeMenu = document.getElementById('closeMenu');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+        menuBtn.onclick = () => mobileMenu.classList.remove('translate-x-full');
+        closeMenu.onclick = () => mobileMenu.classList.add('translate-x-full');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('translate-x-full');
+            });
+        });
+    </script>
+</body>
+</html>
